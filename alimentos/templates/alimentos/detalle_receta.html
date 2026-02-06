@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <title>{{ receta.titulo }} | Chef Mode</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        body { background: #080808; color: white; font-family: 'Poppins', sans-serif; }
+        .hero-receta {
+            height: 50vh;
+            background: linear-gradient(transparent, #080808), url('{{ receta.imagen.url }}');
+            background-size: cover; background-position: center;
+            display: flex; align-items: flex-end; padding: 40px 8%;
+        }
+        .check-item {
+            background: #1a1a1a;
+            padding: 15px;
+            margin-bottom: 10px;
+            border-radius: 8px;
+            display: flex; align-items: center;
+            cursor: pointer; transition: 0.3s;
+        }
+        .check-item:hover { background: #252525; }
+        input[type="checkbox"] { accent-color: #E50914; width: 20px; height: 20px; margin-right: 15px; }
+        .paso-box { border-left: 3px solid #E50914; padding-left: 20px; margin-bottom: 30px; }
+    </style>
+</head>
+<body>
+    <div class="hero-receta">
+        <h1 style="font-family: 'Bebas Neue'; font-size: 5rem;">{{ receta.titulo }}</h1>
+    </div>
+
+    <div class="container mt-5">
+        <div class="row">
+            <div class="col-md-5">
+                <h3 class="mb-4 text-info">🛒 LISTA DE COMPRAS</h3>
+                {% for ing in lista_ingredientes %}
+                <div class="check-item">
+                    <input type="checkbox"> <span>{{ ing }}</span>
+                </div>
+                {% endfor %}
+            </div>
+            <div class="col-md-7">
+                <h3 class="mb-4 text-danger">👨‍🍳 PREPARACIÓN</h3>
+                {% for paso in lista_pasos %}
+                <div class="paso-box">
+                    <h5>PASO {{ forloop.counter }}</h5>
+                    <p>{{ paso }}</p>
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+    </div>
+</body>
+</html>
