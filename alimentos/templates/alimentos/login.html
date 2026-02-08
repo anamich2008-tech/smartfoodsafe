@@ -11,8 +11,7 @@
     <style>
         :root {
             --netflix-red: #E50914;
-            --dark-overlay: rgba(0, 0, 0, 0.65);
-            --input-gray: #333;
+            --dark-overlay: rgba(0, 0, 0, 0.6);
         }
 
         body, html {
@@ -22,146 +21,152 @@
             background-color: #000;
         }
 
-        /* Fondo con imagen y overlay oscuro */
-        .bg-image {
-            background-image: linear-gradient(to top, var(--dark-overlay), var(--dark-overlay)), 
-                              url('https://images.unsplash.com/photo-1510076857177-7470076d4098?q=80&w=2072'); 
+        /* Fondo de Ciudad de Alimentos con Efecto Parallax */
+        .bg-food-city {
+            background-image: linear-gradient(to top, rgba(0,0,0,0.8) 0%, rgba(0,0,0,0.2) 60%, rgba(0,0,0,0.8) 100%), 
+                              url('https://images.unsplash.com/photo-1504674900247-0877df9cc836?q=80&w=2070'); 
             background-size: cover;
             background-position: center;
             height: 100%;
+            width: 100%;
             display: flex;
             align-items: center;
             justify-content: center;
+            position: fixed;
         }
 
-        /* Caja de Login estilo Netflix */
+        /* Caja de Login Estilo "Netflix Glass" */
         .login-card {
-            background-color: rgba(0, 0, 0, 0.75);
-            padding: 60px 68px 40px;
-            border-radius: 8px;
+            background-color: rgba(0, 0, 0, 0.85);
+            padding: 50px 60px;
+            border-radius: 12px;
             width: 100%;
             max-width: 450px;
-            min-height: 550px;
-            box-shadow: 0 15px 25px rgba(0,0,0,0.5);
+            box-shadow: 0 20px 40px rgba(0,0,0,0.7);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            z-index: 10;
         }
 
         .login-card h2 {
             color: #fff;
             font-weight: 700;
-            font-size: 2rem;
-            margin-bottom: 28px;
+            font-size: 2.2rem;
+            margin-bottom: 30px;
         }
 
-        /* Estilo de los Inputs */
+        /* Inputs Modernos */
         .form-control {
-            background: var(--input-gray) !important;
+            background: #333 !important;
             border: none;
-            border-radius: 4px;
+            border-radius: 5px;
             color: white !important;
-            height: 50px;
+            height: 55px;
             padding: 10px 20px;
-            margin-bottom: 16px;
+            margin-bottom: 20px;
+            font-size: 1rem;
         }
 
         .form-control:focus {
             background: #454545 !important;
             box-shadow: none;
-            border-bottom: 2px solid #e87c03; /* El toque naranja de foco */
+            border-bottom: 3px solid var(--netflix-red);
         }
 
         .form-control::placeholder {
             color: #8c8c8c;
         }
 
-        /* Botón Rojo Netflix */
+        /* Botón Rojo Poderoso */
         .btn-netflix {
             background-color: var(--netflix-red);
             border: none;
-            height: 50px;
+            height: 55px;
             font-weight: 700;
-            font-size: 1rem;
-            margin-top: 24px;
-            transition: 0.3s;
+            font-size: 1.1rem;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-top: 15px;
+            transition: all 0.4s ease;
         }
 
         .btn-netflix:hover {
-            background-color: #c11119;
-            transform: scale(1.02);
+            background-color: #ff0f1a;
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(229, 9, 20, 0.4);
         }
 
-        /* Links y texto inferior */
-        .login-help {
+        /* Estilo de enlaces */
+        .options-box {
             display: flex;
             justify-content: space-between;
             color: #b3b3b3;
-            font-size: 0.8rem;
+            font-size: 0.85rem;
             margin-top: 10px;
         }
 
-        .footer-text {
+        .signup-text {
             color: #737373;
-            margin-top: 30px;
+            margin-top: 40px;
+            font-size: 1rem;
         }
 
-        .footer-text a {
+        .signup-text a {
             color: #fff;
             text-decoration: none;
+            font-weight: 600;
         }
 
-        .footer-text a:hover {
+        .signup-text a:hover {
             text-decoration: underline;
         }
 
-        /* Pequeña animación de entrada */
-        .login-card {
-            animation: fadeIn 0.8s ease-out;
+        /* Animación suave de entrada */
+        .fade-in {
+            animation: fadeInAnim 1s ease-in-out;
         }
 
-        @keyframes fadeIn {
-            from { opacity: 0; transform: translateY(20px); }
-            to { opacity: 1; transform: translateY(0); }
+        @keyframes fadeInAnim {
+            from { opacity: 0; transform: scale(0.9); }
+            to { opacity: 1; transform: scale(1); }
         }
     </style>
 </head>
 <body>
 
-<div class="bg-image">
-    <div class="login-card">
-        <h2>Inicia sesión</h2>
+<div class="bg-food-city">
+    <div class="login-card fade-in">
+        <h2>Entrar</h2>
 
         <form method="post">
             {% csrf_token %}
             
-            <div class="mb-3">
-                <input type="text" class="form-control" name="username" placeholder="Usuario o correo" required>
+            <div class="mb-1">
+                <input type="text" class="form-control" name="username" placeholder="Usuario" required>
             </div>
             
-            <div class="mb-3">
+            <div class="mb-1">
                 <input type="password" class="form-control" name="password" placeholder="Contraseña" required>
             </div>
 
-            <button type="submit" class="btn btn-netflix w-100 text-white">Entrar</button>
+            <button type="submit" class="btn btn-netflix w-100 text-white">Iniciar Sesión</button>
             
-            <div class="login-help">
+            <div class="options-box">
                 <div>
-                    <input type="checkbox" id="remember">
-                    <label for="remember">Recuérdame</label>
+                    <input type="checkbox" id="remember" class="form-check-input bg-secondary border-0">
+                    <label for="remember" class="ms-1">Recuérdame</label>
                 </div>
-                <a href="#" class="text-decoration-none text-secondary">¿Necesitas ayuda?</a>
+                <a href="#" class="text-decoration-none text-secondary">¿Olvidaste tu contraseña?</a>
             </div>
         </form>
 
-        <div class="footer-text">
-            ¿Nuevo en la plataforma? <a href="{% url 'registro' %}">Regístrate ahora</a>.
-            <br>
-            <small class="text-muted mt-3 d-block">
-                Esta página está protegida por Google reCAPTCHA para asegurar que no eres un robot.
-            </small>
+        <div class="signup-text">
+            ¿Primera vez en SmartFoodSafe? <a href="{% url 'registro' %}">Suscríbete ya</a>.
+            <p class="mt-4 small text-muted">
+                Tu cocina merece orden. Empieza hoy mismo a controlar tu inventario.
+            </p>
         </div>
     </div>
 </div>
 
 </body>
 </html>
-
-

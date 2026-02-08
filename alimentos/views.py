@@ -177,6 +177,6 @@ def eliminar_compra(request, id):
 
 @login_required
 def eliminar_receta(request, id):
-    receta = get_object_or_404(Receta, id=id, usuario=request.user)
+    receta = get_object_or_404(Receta, id=id)
     receta.delete()
     return redirect('lista_recetas')

@@ -1,25 +1,158 @@
 <!DOCTYPE html>
-<html>
+<html lang="es">
 <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Registro | SmartFoodSafe</title>
+    
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap" rel="stylesheet">
+
+    <style>
+        :root {
+            --netflix-red: #E50914;
+            --dark-gray: #333;
+        }
+
+        body, html {
+            height: 100%;
+            margin: 0;
+            font-family: 'Poppins', sans-serif;
+            background-color: #000;
+        }
+
+        /* Fondo de Ciudad de Alimentos (Mismo estilo que el Login) */
+        .bg-food-city {
+            background-image: linear-gradient(to top, rgba(0,0,0,0.8) 0%, rgba(0,0,0,0.3) 50%, rgba(0,0,0,0.8) 100%), 
+                              url('https://images.unsplash.com/photo-1504674900247-0877df9cc836?q=80&w=2070'); 
+            background-size: cover;
+            background-position: center;
+            height: 100%;
+            width: 100%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            position: fixed;
+        }
+
+        /* Tarjeta de Registro Estilo Glassmorphism */
+        .register-card {
+            background-color: rgba(0, 0, 0, 0.85);
+            padding: 50px 60px;
+            border-radius: 12px;
+            width: 100%;
+            max-width: 450px;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.7);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            z-index: 10;
+            animation: slideUp 0.8s ease-out;
+        }
+
+        .register-card h2 {
+            color: #fff;
+            font-weight: 700;
+            font-size: 2.2rem;
+            margin-bottom: 30px;
+            text-align: left;
+        }
+
+        /* Inputs Estilo Netflix */
+        .form-control {
+            background: var(--dark-gray) !important;
+            border: none;
+            border-radius: 5px;
+            color: white !important;
+            height: 55px;
+            padding: 10px 20px;
+            margin-bottom: 15px;
+            font-size: 1rem;
+        }
+
+        .form-control:focus {
+            background: #454545 !important;
+            box-shadow: none;
+            border-bottom: 3px solid var(--netflix-red);
+        }
+
+        .form-control::placeholder {
+            color: #8c8c8c;
+        }
+
+        /* Botón de Registro */
+        .btn-register {
+            background-color: var(--netflix-red);
+            border: none;
+            height: 55px;
+            font-weight: 700;
+            font-size: 1.1rem;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-top: 20px;
+            transition: all 0.3s ease;
+        }
+
+        .btn-register:hover {
+            background-color: #ff0f1a;
+            transform: scale(1.02);
+            box-shadow: 0 5px 15px rgba(229, 9, 20, 0.4);
+        }
+
+        /* Enlaces inferiores */
+        .login-link {
+            color: #737373;
+            margin-top: 30px;
+            font-size: 1rem;
+            text-align: left;
+        }
+
+        .login-link a {
+            color: #fff;
+            text-decoration: none;
+            font-weight: 600;
+        }
+
+        .login-link a:hover {
+            text-decoration: underline;
+        }
+
+        /* Animación */
+        @keyframes slideUp {
+            from { opacity: 0; transform: translateY(30px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+    </style>
 </head>
-<body class="bg-dark text-light">
+<body>
 
-<div class="container mt-5 col-md-4">
-    <h2 class="text-center mb-4">📝 Crear cuenta</h2>
+<div class="bg-food-city">
+    <div class="register-card">
+        <h2>Suscríbete</h2>
 
-    <form method="post">
-        {% csrf_token %}
-        <input class="form-control mb-3" name="username" placeholder="Usuario" required>
-        <input class="form-control mb-3" type="email" name="email" placeholder="Email">
-        <input class="form-control mb-3" type="password" name="password" placeholder="Contraseña" required>
-        <button class="btn btn-success w-100">Registrarse</button>
-    </form>
+        <form method="post">
+            {% csrf_token %}
+            
+            <div class="mb-1">
+                <input type="text" class="form-control" name="username" placeholder="Nombre de usuario" required>
+            </div>
+            
+            <div class="mb-1">
+                <input type="email" class="form-control" name="email" placeholder="Correo electrónico" required>
+            </div>
+            
+            <div class="mb-1">
+                <input type="password" class="form-control" name="password" placeholder="Contraseña segura" required>
+            </div>
 
-    <p class="text-center mt-3">
-        ¿Ya tienes cuenta? <a href="{% url 'login' %}">Inicia sesión</a>
-    </p>
+            <button type="submit" class="btn btn-register w-100 text-white">Comenzar Registro</button>
+        </form>
+
+        <div class="login-link">
+            ¿Ya tienes una cuenta? <a href="{% url 'login' %}">Inicia sesión</a>.
+            <p class="mt-4 small text-muted">
+                Al unirte, aceptas que SmartFoodSafe te ayude a salvar el mundo, un ingrediente a la vez. 🥗✨
+            </p>
+        </div>
+    </div>
 </div>
 
 </body>
