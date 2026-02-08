@@ -1,5 +1,7 @@
 from django.db import models
 from datetime import date
+from django.utils import timezone
+from datetime import timedelta
 from django.contrib.auth.models import User
 
 class Categoria(models.Model):
@@ -13,8 +15,7 @@ class Alimento(models.Model):
     usuario = models.ForeignKey(
         User,
         on_delete=models.CASCADE,
-        null=True,
-        blank=True
+        related_name="alimentos"
     )
 
     nombre = models.CharField(max_length=100)
@@ -23,29 +24,39 @@ class Alimento(models.Model):
     categoria = models.ForeignKey("Categoria", on_delete=models.SET_NULL, null=True)
     foto = models.ImageField(upload_to="fotos/", null=True, blank=True)
 
-    usuario = models.ForeignKey(
-        User,
-        on_delete=models.CASCADE,
-        related_name="alimentos"
-    )
+    def estado(self):
+        hoy = timezone.now().date()
+
+        if self.fecha_caducidad < hoy:
+            return "rojo"
+        elif self.fecha_caducidad <= hoy + timedelta(days=3):
+            return "amarillo"
+        else:
+            return "verde"
 
     def __str__(self):
         return self.nombre
 
+
 class Compra(models.Model):
+    usuario = models.ForeignKey(
+        User,
+        on_delete=models.CASCADE,
+        related_name="compras"
+    )
     nombre = models.CharField(max_length=100)
     fecha_compra = models.DateField(default=date.today)
     comprado = models.BooleanField(default=False)
 
     def __str__(self):
         return self.nombre
+
     
 class Receta(models.Model):
     titulo = models.CharField(max_length=200)
     ingredientes = models.TextField()
     pasos = models.TextField()
     imagen = models.ImageField(upload_to='recetas/', null=True, blank=True)
-    usuario = models.ForeignKey(User, on_delete=models.CASCADE) 
 
     def __str__(self):
         return self.titulo

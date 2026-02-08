@@ -178,6 +178,12 @@
 
     <div class="shopping-grid">
         {% for compra in compras %}
+
+        <a href="{% url 'eliminar_compra' compra.id %}"
+            onclick="return confirm('¿Eliminar este producto de compras?')"
+            style="position:absolute; top:10px; right:10px; color:#ff4d4d; font-size:18px;">
+            🗑️
+        </a>
             <div class="shopping-card {% if compra.comprado %}card-bought{% endif %}">
                 
                 <div class="card-image-wrapper">

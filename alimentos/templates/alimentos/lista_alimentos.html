@@ -167,6 +167,13 @@
 <h4 class="section-title">📺 MI INVENTARIO ACTUAL</h4>
 <div class="netflix-row">
     {% for alimento in alimentos %}
+
+    <a href="{% url 'eliminar_alimento' alimento.id %}"
+        onclick="return confirm('¿Seguro que deseas eliminar este alimento?')"
+        style="color:red; text-decoration:none;">
+        🗑️
+    </a>
+
     <div class="food-card {% if alimento.estado == 'rojo' %}card-vencido{% endif %}">
         
         <div class="badge-bubble" style="background: {% if alimento.estado == 'rojo' %}var(--vencido){% elif alimento.estado == 'amarillo' %}var(--por-vencer){% else %}var(--fresco){% endif %};">

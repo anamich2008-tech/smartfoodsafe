@@ -116,6 +116,13 @@
 
     <div class="recipe-grid">
         {% for receta in recetas %}
+
+        <a href="{% url 'eliminar_receta' receta.id %}"
+            onclick="return confirm('¿Eliminar esta receta?')"
+            style="position:absolute; top:10px; right:10px; color:#ff4d4d;">
+            🗑️
+        </a>
+
         <div class="recipe-card" onclick="location.href='{% url 'detalle_receta' receta.id %}'">
             {% if receta.imagen %}
                 <img src="{{ receta.imagen.url }}" class="recipe-img" alt="{{ receta.titulo }}">

@@ -9,7 +9,7 @@ from .forms import AlimentoForm, CompraForm, RecetaForm
 
 
 # =====================
-# AUTENTICACIÓN
+# AUTH
 # =====================
 
 def login_view(request):
@@ -59,7 +59,7 @@ def logout_view(request):
 
 @login_required
 def lista_alimentos(request):
-    alimentos = Alimento.objects.all()
+    alimentos = Alimento.objects.filter(usuario=request.user)
     return render(request, "alimentos/lista_alimentos.html", {
         "alimentos": alimentos
     })
@@ -68,14 +68,16 @@ def lista_alimentos(request):
 @login_required
 def agregar_alimento(request):
     if request.method == "POST":
-        form = AlimentoForm(request.POST)
+        form = AlimentoForm(request.POST, request.FILES)
         if form.is_valid():
-            form.save()
+            alimento = form.save(commit=False)
+            alimento.usuario = request.user
+            alimento.save()
             return redirect("lista_alimentos")
     else:
         form = AlimentoForm()
 
-    return render(request, "alimentos/agregar_alimento.html", {
+    return render(request, "alimentos/agregar.html", {
         "form": form
     })
 
@@ -86,8 +88,8 @@ def agregar_alimento(request):
 
 @login_required
 def lista_compras(request):
-    compras = Compra.objects.all()
-    return render(request, "alimentos/lista_compras.html", {
+    compras = Compra.objects.filter(usuario=request.user)
+    return render(request, "alimentos/compras.html", {
         "compras": compras
     })
 
@@ -97,7 +99,9 @@ def agregar_compra(request):
     if request.method == "POST":
         form = CompraForm(request.POST)
         if form.is_valid():
-            form.save()
+            compra = form.save(commit=False)
+            compra.usuario = request.user
+            compra.save()
             return redirect("lista_compras")
     else:
         form = CompraForm()
@@ -109,17 +113,16 @@ def agregar_compra(request):
 
 @login_required
 def marcar_comprado(request, compra_id):
-    compra = get_object_or_404(Compra, id=compra_id)
+    compra = get_object_or_404(Compra, id=compra_id, usuario=request.user)
     compra.comprado = True
     compra.save()
     return redirect("lista_compras")
 
 
 # =====================
-# RECETAS
+# RECETAS (PÚBLICAS)
 # =====================
 
-@login_required
 def lista_recetas(request):
     recetas = Receta.objects.all()
     return render(request, "alimentos/recetas.html", {
@@ -130,9 +133,11 @@ def lista_recetas(request):
 @login_required
 def agregar_receta(request):
     if request.method == "POST":
-        form = RecetaForm(request.POST)
+        form = RecetaForm(request.POST, request.FILES)
         if form.is_valid():
-            form.save()
+            receta = form.save(commit=False)
+            receta.usuario = request.user
+            receta.save()
             return redirect("lista_recetas")
     else:
         form = RecetaForm()
@@ -142,10 +147,36 @@ def agregar_receta(request):
     })
 
 
-@login_required
 def detalle_receta(request, receta_id):
     receta = get_object_or_404(Receta, id=receta_id)
     return render(request, "alimentos/detalle_receta.html", {
         "receta": receta
     })
 
+
+@login_required
+def lista_inventario(request):
+    alimentos = Alimento.objects.all()
+    return render(request, "alimentos/lista_alimentos.html", {
+        "alimentos": alimentos
+    })
+
+
+@login_required
+def eliminar_alimento(request, id):
+    alimento = get_object_or_404(Alimento, id=id)
+    alimento.delete()
+    return redirect("lista_inventario")
+
+
+@login_required
+def eliminar_compra(request, id):
+    compra = get_object_or_404(Compra, id=id, usuario=request.user)
+    compra.delete()
+    return redirect('lista_compras')
+
+@login_required
+def eliminar_receta(request, id):
+    receta = get_object_or_404(Receta, id=id, usuario=request.user)
+    receta.delete()
+    return redirect('lista_recetas')
