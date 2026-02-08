@@ -7,6 +7,8 @@
 
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
+    
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 
     <style>
         :root {
@@ -48,17 +50,15 @@
             color: var(--primary-red);
         }
 
-        /* Estilo para los campos de Django form.as_p */
-        form p {
-            margin-bottom: 20px;
-        }
+        /* Estilo para los campos de Django */
+        form p { margin-bottom: 20px; }
 
         form label {
             display: block;
             font-weight: 600;
             margin-bottom: 8px;
             color: #b3b3b3;
-            font-size: 0.9rem;
+            font-size: 0.85rem;
             text-transform: uppercase;
         }
 
@@ -69,17 +69,49 @@
             border: 1px solid #333;
             background-color: #333;
             color: white;
-            transition: all 0.3s ease;
+            margin-bottom: 10px;
         }
 
-        form input:focus {
-            outline: none;
-            border-color: var(--primary-red);
-            background-color: #444;
-            box-shadow: 0 0 8px rgba(229, 9, 20, 0.3);
+        /* SECCIÓN DE FOTO */
+        .camera-section {
+            background: #262626;
+            border: 2px dashed #444;
+            border-radius: 10px;
+            padding: 20px;
+            text-align: center;
+            margin-top: 10px;
+            margin-bottom: 25px;
         }
 
-        /* BOTONES */
+        #img-preview {
+            max-width: 100%;
+            height: 180px;
+            object-fit: cover;
+            border-radius: 8px;
+            display: none;
+            margin: 10px auto;
+            border: 2px solid var(--primary-red);
+        }
+
+        .btn-camera-trigger {
+            background: transparent;
+            color: white;
+            border: 1px solid white;
+            padding: 10px 20px;
+            border-radius: 5px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: 0.3s;
+        }
+
+        .btn-camera-trigger:hover {
+            background: white;
+            color: black;
+        }
+
+        /* Ocultar input original de Django */
+        input[type="file"] { display: none; }
+
         .btn-save {
             background-color: var(--primary-red);
             color: white;
@@ -89,64 +121,116 @@
             font-weight: bold;
             font-size: 1.1rem;
             border-radius: 4px;
-            margin-top: 10px;
-            transition: 0.3s;
             text-transform: uppercase;
+            transition: 0.3s;
         }
 
         .btn-save:hover {
             background-color: #f40612;
-            transform: translateY(-2px);
-            box-shadow: 0 5px 15px rgba(229, 9, 20, 0.4);
+            transform: scale(1.02);
         }
 
-        .btn-back {
-            display: block;
-            text-align: center;
-            margin-top: 20px;
+        .help-text {
             color: #8c8c8c;
-            text-decoration: none;
-            font-size: 0.9rem;
-            transition: 0.3s;
-        }
-
-        .btn-back:hover {
-            color: white;
-        }
-
-        /* Animación de entrada */
-        .fade-in {
-            animation: fadeIn 0.6s ease-out;
-        }
-
-        @keyframes fadeIn {
-            from { opacity: 0; transform: translateY(20px); }
-            to { opacity: 1; transform: translateY(0); }
+            font-size: 0.75rem;
+            margin-top: -5px;
+            margin-bottom: 15px;
+            display: block;
         }
     </style>
 </head>
 <body>
 
-<div class="form-container fade-in">
+<div class="form-container">
     <h2>NUEVO INGRESO</h2>
     
-    <form method="POST" enctype="multipart/form-data">
+    <form method="POST" enctype="multipart/form-data" id="mainForm">
         {% csrf_token %}
         
         <div class="form-fields">
             {{ form.as_p }}
         </div>
+        
+        <small id="fechaAyuda" class="help-text">ℹ️ Formato: Año-Mes-Día (Ej: 2026-05-31)</small>
+
+        <div class="camera-section">
+            <label>Imagen del Producto</label>
+            <img id="img-preview" src="" alt="Vista previa">
+            
+            <div id="instrucciones-camara">
+                <p class="small text-secondary">La foto es obligatoria para tu inventario</p>
+                <button type="button" class="btn-camera-trigger" onclick="abrirOpcionesImagen()">
+                    📸 TOMAR FOTO / GALERÍA
+                </button>
+            </div>
+            <p id="archivo-ok" class="small text-success mt-2 fw-bold" style="display:none;">✅ Imagen cargada</p>
+        </div>
+
+        <div class="form-check mb-4 mt-3">
+            <input class="form-check-input" type="checkbox" id="checkPrivacidad" required>
+            <label class="form-check-label small text-white-50" for="checkPrivacidad" style="text-transform: none;">
+                Acepto que SmartFoodSafe acceda a mi cámara/galería según la política de privacidad.
+            </label>
+        </div>
 
         <button type="submit" class="btn-save">Guardar en Inventario</button>
-        <a href="/" class="btn-back">← Volver a la cartelera</a>
+        <a href="/" class="btn-back" style="display:block; text-align:center; color:#8c8c8c; text-decoration:none; margin-top:15px;">← Volver</a>
     </form>
 </div>
 
 <script>
-    // Un pequeño truco para que los inputs de Django tengan clases de Bootstrap automáticamente
-    document.querySelectorAll('input, select, textarea').forEach(element => {
-        element.classList.add('form-control-custom');
+    // 1. Convertir campo de fecha en calendario automáticamente
+    document.addEventListener('DOMContentLoaded', function() {
+        const inputFecha = document.querySelector('input[name*="fecha"]') || document.querySelector('input[name*="caducidad"]');
+        if (inputFecha) {
+            inputFecha.type = 'date'; // Esto pone el calendario 📅
+            // Movemos el texto de ayuda justo debajo de la fecha
+            const ayuda = document.getElementById('fechaAyuda');
+            inputFecha.parentNode.insertBefore(ayuda, inputFecha.nextSibling);
+        }
+
+        // Hacemos que el input de archivo de Django sea el que usemos
+        const inputFileReal = document.querySelector('input[type="file"]');
+        if (inputFileReal) {
+            inputFileReal.id = "inputFotoReal";
+            inputFileReal.required = true; // Foto obligatoria
+            
+            // Si cambia (eligen foto), mostrar previsualización
+            inputFileReal.addEventListener('change', function() {
+                const file = this.files[0];
+                if (file) {
+                    const reader = new FileReader();
+                    reader.onload = function(e) {
+                        const preview = document.getElementById('img-preview');
+                        preview.src = e.target.result;
+                        preview.style.display = 'block';
+                        document.getElementById('instrucciones-camara').style.display = 'none';
+                        document.getElementById('archivo-ok').style.display = 'block';
+                    }
+                    reader.readAsDataURL(file);
+                }
+            });
+        }
     });
+
+    // 2. Función para abrir la cámara con permiso previo
+    function abrirOpcionesImagen() {
+        Swal.fire({
+            title: 'Acceso al dispositivo',
+            text: "Para registrar el alimento, necesitamos abrir tu cámara o galería. ¿Deseas continuar?",
+            icon: 'info',
+            showCancelButton: true,
+            confirmButtonText: 'Sí, permitir',
+            cancelButtonText: 'Cancelar',
+            background: '#141414',
+            color: '#fff',
+            confirmButtonColor: '#E50914'
+        }).then((result) => {
+            if (result.isConfirmed) {
+                document.getElementById('inputFotoReal').click();
+            }
+        });
+    }
 </script>
 
 </body>

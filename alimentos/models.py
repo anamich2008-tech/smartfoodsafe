@@ -22,7 +22,7 @@ class Alimento(models.Model):
     fecha_compra = models.DateField()
     fecha_caducidad = models.DateField()
     categoria = models.ForeignKey("Categoria", on_delete=models.SET_NULL, null=True)
-    foto = models.ImageField(upload_to="fotos/", null=True, blank=True)
+    foto = models.ImageField(upload_to='alimentos/')
 
     def estado(self):
         hoy = timezone.now().date()
@@ -39,6 +39,20 @@ class Alimento(models.Model):
 
 
 class Compra(models.Model):
+    # Tu lista personalizada de categorías
+    CATEGORIAS_CHOICES = [
+        ('FRUTAS', '🍎 Frutas y verduras'),
+        ('CARNES', '🥩 Carnes y proteínas'),
+        ('LACTEOS', '🥛 Lácteos'),
+        ('CEREALES', '🌾 Cereales y granos'),
+        ('ENLATADOS', '🥫 Enlatados y conservas'),
+        ('ESPECIAS', '🧂 Condimentos y especias'),
+        ('SNACKS', '🍪 Snacks'),
+        ('CONGELADOS', '❄️ Congelados'),
+        ('BEBIDAS', '🧃 Bebidas'),
+        ('OTROS', '📦 Otros'),
+    ]
+
     usuario = models.ForeignKey(
         User,
         on_delete=models.CASCADE,
@@ -47,9 +61,16 @@ class Compra(models.Model):
     nombre = models.CharField(max_length=100)
     fecha_compra = models.DateField(default=date.today)
     comprado = models.BooleanField(default=False)
+    
+    
+    categoria = models.CharField(
+        max_length=20,
+        choices=CATEGORIAS_CHOICES,
+        default='OTROS'
+    )
 
     def __str__(self):
-        return self.nombre
+        return f"{self.nombre} ({self.get_categoria_display()})"
 
     
 class Receta(models.Model):

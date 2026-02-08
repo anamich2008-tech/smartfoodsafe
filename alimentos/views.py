@@ -3,7 +3,8 @@ from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.models import User
 from django.contrib import messages
-
+from django.utils import timezone
+from datetime import timedelta
 from .models import Alimento, Compra, Receta
 from .forms import AlimentoForm, CompraForm, RecetaForm
 
@@ -88,9 +89,38 @@ def agregar_alimento(request):
 
 @login_required
 def lista_compras(request):
+    
     compras = Compra.objects.filter(usuario=request.user)
+    
+    hoy = timezone.now().date()
+    proximo_limite = hoy + timedelta(days=2)
+    hay_urgencia = compras.filter(fecha_compra__lte=proximo_limite, comprado=False).exists()
+
+    categorias_nombres = {
+        'FRUTAS': '🍎 Frutas y verduras',
+        'CARNES': '🥩 Carnes y proteínas',
+        'LACTEOS': '🥛 Lácteos',
+        'CEREALES': '🌾 Cereales y granos',
+        'ENLATADOS': '🥫 Enlatados y conservas',
+        'ESPECIAS': '🧂 Condimentos y especias',
+        'SNACKS': '🍪 Snacks',
+        'CONGELADOS': '❄️ Congelados',
+        'BEBIDAS': '🧃 Bebidas',
+        'OTROS': '📦 Otros',
+    }
+
+    compras_por_categoria = []
+    for cod, nombre_full in categorias_nombres.items():
+        items = compras.filter(categoria=cod)
+        if items.exists():
+            compras_por_categoria.append({
+                'nombre': nombre_full,
+                'items': items
+            })
+
     return render(request, "alimentos/compras.html", {
-        "compras": compras
+        'compras_por_categoria': compras_por_categoria,
+        'hay_urgencia': hay_urgencia,
     })
 
 
@@ -149,14 +179,20 @@ def agregar_receta(request):
 
 def detalle_receta(request, receta_id):
     receta = get_object_or_404(Receta, id=receta_id)
-    return render(request, "alimentos/detalle_receta.html", {
-        "receta": receta
+
+    lista_ingredientes = [i.strip() for i in receta.ingredientes.splitlines() if i.strip()]
+    lista_pasos = [p.strip() for p in receta.pasos.splitlines() if p.strip()]
+
+    return render(request, 'alimentos/detalle_receta.html', {
+        'receta': receta,
+        'lista_ingredientes': lista_ingredientes,
+        'lista_pasos': lista_pasos
     })
 
 
 @login_required
 def lista_inventario(request):
-    alimentos = Alimento.objects.all()
+    alimentos = Alimento.objects.filter(usuario=request.user)
     return render(request, "alimentos/lista_alimentos.html", {
         "alimentos": alimentos
     })
@@ -164,19 +200,20 @@ def lista_inventario(request):
 
 @login_required
 def eliminar_alimento(request, id):
-    alimento = get_object_or_404(Alimento, id=id)
+    alimento = get_object_or_404(Alimento, id=id, usuario=request.user)
     alimento.delete()
-    return redirect("lista_inventario")
+    return redirect("lista_alimentos")
 
 
 @login_required
 def eliminar_compra(request, id):
     compra = get_object_or_404(Compra, id=id, usuario=request.user)
     compra.delete()
-    return redirect('lista_compras')
+    return redirect("lista_compras")
+
 
 @login_required
 def eliminar_receta(request, id):
-    receta = get_object_or_404(Receta, id=id)
+    receta = get_object_or_404(Receta, id=id, usuario=request.user)
     receta.delete()
-    return redirect('lista_recetas')
+    return redirect("lista_recetas")

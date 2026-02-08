@@ -18,7 +18,7 @@
             --vencido: #ff0000;
             --por-vencer: #ffcc00;
             --fresco: #22c55e;
-            --glow-red: rgba(255, 0, 0, 0.5);
+            --glow-red: rgba(255, 0, 0, 0.6);
         }
 
         body {
@@ -29,131 +29,95 @@
             overflow-x: hidden;
         }
 
-        /* ANIMACIÓN DE BURBUJAS FLOTANTES */
-        .bg-bubbles {
-            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-            z-index: -1; pointer-events: none;
+        /* --- ESTADÍSTICAS DE CRISTAL (NUEVO) --- */
+        .stats-container {
+            display: flex;
+            justify-content: space-around;
+            background: rgba(255, 255, 255, 0.05);
+            backdrop-filter: blur(15px);
+            border-radius: 20px;
+            padding: 25px;
+            margin: -60px 5% 30px;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            position: relative;
+            z-index: 100;
+            box-shadow: 0 15px 35px rgba(0,0,0,0.5);
         }
-        .bubble {
-            position: absolute; bottom: -100px;
-            background: rgba(0, 212, 255, 0.05);
-            border-radius: 50%;
-            animation: float 15s infinite ease-in;
+        .stat-item { text-align: center; }
+        .stat-value { display: block; font-size: 2rem; font-weight: 800; font-family: 'Bebas Neue'; line-height: 1; }
+        .stat-label { font-size: 0.7rem; color: #8c8c8c; text-transform: uppercase; letter-spacing: 1px; }
+
+        /* --- FILTROS ESTILO NETFLIX (NUEVO) --- */
+        .filter-container { padding: 0 5%; display: flex; gap: 12px; margin-bottom: 10px; flex-wrap: wrap; }
+        .btn-filter {
+            background: #1a1a1a; border: 1px solid #333; color: #8c8c8c;
+            padding: 6px 18px; border-radius: 20px; font-size: 0.8rem; font-weight: 600;
+            transition: 0.3s;
         }
-        @keyframes float {
-            0% { transform: translateY(0) rotate(0deg); opacity: 0; }
-            50% { opacity: 0.3; }
-            100% { transform: translateY(-120vh) rotate(360deg); opacity: 0; }
+        .btn-filter:hover, .btn-filter.active {
+            background: var(--primary-red); border-color: var(--primary-red);
+            color: white; box-shadow: 0 0 15px var(--glow-red);
         }
 
-        /* NAVBAR */
-        .navbar {
-            background: linear-gradient(to bottom, rgba(0,0,0,0.9) 0%, transparent 100%);
-            padding: 25px 5%;
-            position: absolute; width: 100%; z-index: 1000;
-        }
-        .navbar-brand {
-            font-family: 'Bebas Neue', cursive;
-            font-size: 2.2rem;
-            color: var(--primary-red) !important;
-            text-shadow: 2px 2px 10px rgba(229, 9, 20, 0.4);
+        /* --- ESTADOS VACÍOS (NUEVO) --- */
+        .empty-state {
+            text-align: center; padding: 80px 20px; background: rgba(255, 255, 255, 0.02);
+            border-radius: 20px; margin: 20px 5%; border: 2px dashed #333;
         }
 
-        /* HERO SECTION */
+        /* --- TUS ANIMACIONES DE PARPADEO --- */
+        @keyframes pulse-red {
+            0% { box-shadow: 0 0 5px var(--vencido); border-color: var(--vencido); }
+            50% { box-shadow: 0 0 25px var(--vencido); border-color: #ff4d4d; }
+            100% { box-shadow: 0 0 5px var(--vencido); border-color: var(--vencido); }
+        }
+        @keyframes pulse-yellow {
+            0% { box-shadow: 0 0 5px var(--por-vencer); border-color: var(--por-vencer); }
+            50% { box-shadow: 0 0 15px var(--por-vencer); border-color: #ffe066; }
+            100% { box-shadow: 0 0 5px var(--por-vencer); border-color: var(--por-vencer); }
+        }
+        .card-vencido-animada { animation: pulse-red 1.5s infinite; border: 2px solid var(--vencido) !important; }
+        .card-proximo-animada { animation: pulse-yellow 2s infinite; border: 2px solid var(--por-vencer) !important; }
+
+        /* --- ESTILOS BASE DE TU DASHBOARD --- */
+        .bg-bubbles { position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: -1; pointer-events: none; }
+        .bubble { position: absolute; bottom: -100px; background: rgba(0, 212, 255, 0.05); border-radius: 50%; animation: float 15s infinite ease-in; }
+        @keyframes float { 0% { transform: translateY(0) rotate(0deg); opacity: 0; } 50% { opacity: 0.3; } 100% { transform: translateY(-120vh) rotate(360deg); opacity: 0; } }
+
+        .navbar { background: linear-gradient(to bottom, rgba(0,0,0,0.9) 0%, transparent 100%); padding: 25px 5%; position: absolute; width: 100%; z-index: 1000; }
+        .navbar-brand { font-family: 'Bebas Neue'; font-size: 2.2rem; color: var(--primary-red) !important; text-shadow: 2px 2px 10px rgba(229, 9, 20, 0.4); }
+
         .hero-section {
-            height: 85vh;
-            background: linear-gradient(rgba(0,0,0,0.3), var(--deep-black)), 
+            height: 75vh;
+            background: linear-gradient(rgba(0,0,0,0.2), var(--deep-black)), 
                         url('https://images.unsplash.com/photo-1544025162-d76694265947?q=80&w=2069');
-            background-size: cover;
-            background-position: center;
-            display: flex; align-items: center; padding: 0 8%;
+            background-size: cover; background-position: center; display: flex; align-items: center; padding: 0 8%;
         }
-        .hero-title {
-            font-weight: 800; font-size: clamp(2.5rem, 6vw, 5.5rem);
-            line-height: 1.1; animation: fadeInDown 1s ease;
-        }
+        .hero-title { font-weight: 800; font-size: clamp(2.5rem, 6vw, 5.5rem); line-height: 1.1; }
         .hero-title span { color: var(--neon-blue); text-shadow: 0 0 20px var(--neon-blue); }
 
-        /* TARJETAS ESTILO NETFLIX */
-        .section-title {
-            padding: 40px 5% 10px; font-family: 'Bebas Neue';
-            font-size: 2.2rem; letter-spacing: 2px;
-        }
-        .netflix-row {
-            display: flex; gap: 25px; overflow-x: auto;
-            padding: 20px 5% 60px; scrollbar-width: none;
-        }
+        .section-title { padding: 40px 5% 10px; font-family: 'Bebas Neue'; font-size: 2.2rem; letter-spacing: 2px; }
+        .netflix-row { display: flex; gap: 25px; overflow-x: auto; padding: 20px 5% 60px; scrollbar-width: none; }
         .netflix-row::-webkit-scrollbar { display: none; }
 
-        .food-card {
-            flex: 0 0 320px; height: 210px;
-            background: #1a1a1a; border-radius: 15px;
-            position: relative; transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-            cursor: pointer; border: 1px solid #333; overflow: hidden;
-        }
-        .food-card:hover { transform: scale(1.08) translateY(-10px); z-index: 100; border-color: white; }
-
-        /* BOTÓN ELIMINAR PRO (Oculto hasta el hover) */
-        .btn-delete-food {
-            position: absolute; top: 15px; left: 15px;
-            background: rgba(0, 0, 0, 0.7); backdrop-filter: blur(5px);
-            width: 38px; height: 38px; border-radius: 50%;
-            display: flex; align-items: center; justify-content: center;
-            color: white; text-decoration: none; z-index: 300;
-            border: 1px solid rgba(255, 255, 255, 0.1);
-            opacity: 0; transition: 0.3s;
-        }
-        .food-card:hover .btn-delete-food { opacity: 1; }
-        .btn-delete-food:hover {
-            background: var(--primary-red); transform: scale(1.1) rotate(-10deg);
-            box-shadow: 0 0 15px var(--primary-red); color: white;
-        }
-
-        .card-vencido { box-shadow: 0 0 20px var(--glow-red); border-color: var(--vencido); }
-        .food-card img { width: 100%; height: 100%; object-fit: cover; opacity: 0.8; }
-
-        .badge-bubble {
-            position: absolute; top: 15px; right: 15px;
-            padding: 6px 14px; border-radius: 8px;
-            font-weight: 900; font-size: 0.75rem; color: white;
-            z-index: 200; box-shadow: 0 4px 15px rgba(0,0,0,0.4);
-        }
-
-        .card-overlay {
-            position: absolute; bottom: 0; left: 0; width: 100%;
-            padding: 20px; background: linear-gradient(transparent, rgba(0,0,0,0.95) 80%);
-        }
-
-        .food-name { font-size: 1.6rem; font-weight: 800; margin: 0; }
+        .food-card { flex: 0 0 320px; height: 210px; background: #1a1a1a; border-radius: 15px; position: relative; transition: 0.4s; border: 1px solid #333; overflow: hidden; }
+        .food-card:hover { transform: scale(1.05); z-index: 100; border-color: white; }
         
-        .btn-status {
-            border: none; width: 100%; padding: 8px;
-            border-radius: 6px; font-weight: 700;
-            font-size: 0.85rem; margin-top: 10px;
-            display: flex; align-items: center; justify-content: center; gap: 8px;
-            transition: 0.3s; text-decoration: none;
-        }
-
-        @keyframes shake {
-            0%, 100% { transform: translateX(0); }
-            25% { transform: translateX(-5px); }
-            75% { transform: translateX(5px); }
-        }
-        .btn-vencido { background: var(--vencido); color: white; animation: shake 0.5s infinite; }
-        .btn-por-vencer { background: var(--por-vencer); color: black; }
-        .btn-fresco { background: white; color: black; }
-
-        @keyframes fadeInDown {
-            from { opacity: 0; transform: translateY(-30px); }
-            to { opacity: 1; transform: translateY(0); }
-        }
+        .card-overlay { position: absolute; bottom: 0; left: 0; width: 100%; padding: 20px; background: linear-gradient(transparent, rgba(0,0,0,0.95) 80%); }
+        .food-name { font-size: 1.6rem; font-weight: 800; margin: 0; }
+        .food-card img { width: 100%; height: 100%; object-fit: cover; opacity: 0.7; }
+        
+        .badge-bubble { position: absolute; top: 15px; right: 15px; padding: 6px 14px; border-radius: 8px; font-weight: 900; font-size: 0.75rem; z-index: 200; }
+        .btn-status { border: none; width: 100%; padding: 8px; border-radius: 6px; font-weight: 700; font-size: 0.85rem; margin-top: 10px; display: flex; align-items: center; justify-content: center; gap: 8px; text-decoration: none; }
+        
+        .btn-delete-food { position: absolute; top: 15px; left: 15px; background: rgba(0,0,0,0.6); width: 35px; height: 35px; border-radius: 50%; display: flex; align-items: center; justify-content: center; color: white; text-decoration: none; z-index: 300; opacity: 0; transition: 0.3s; }
+        .food-card:hover .btn-delete-food { opacity: 1; }
     </style>
 </head>
 <body>
 
 <div class="bg-bubbles">
     <div class="bubble" style="left: 5%; width: 80px; height: 80px; animation-delay: 0s;"></div>
-    <div class="bubble" style="left: 20%; width: 40px; height: 40px; animation-delay: 2s;"></div>
     <div class="bubble" style="left: 50%; width: 60px; height: 60px; animation-delay: 4s;"></div>
     <div class="bubble" style="left: 80%; width: 90px; height: 90px; animation-delay: 1s;"></div>
 </div>
@@ -161,8 +125,8 @@
 <nav class="navbar d-flex justify-content-between">
     <a href="{% url 'lista_alimentos' %}" class="navbar-brand">SMARTFOODSAFE</a>
     <div class="d-flex gap-4 align-items-center">
-        <a href="{% url 'lista_compras' %}" class="text-white text-decoration-none fw-bold small mt-1">🛒 COMPRAS</a>
-        <a href="{% url 'lista_recetas' %}" class="text-white text-decoration-none fw-bold small mt-1">🍳 RECETAS</a>
+        <a href="{% url 'lista_compras' %}" class="text-white text-decoration-none fw-bold small">🛒 COMPRAS</a>
+        <a href="{% url 'lista_recetas' %}" class="text-white text-decoration-none fw-bold small">🍳 RECETAS</a>
         <a href="{% url 'agregar_alimento' %}" class="btn btn-danger btn-sm fw-bold px-3">+ ALIMENTO</a>
     </div>
 </nav>
@@ -170,23 +134,50 @@
 <section class="hero-section">
     <div class="hero-content">
         <h1 class="hero-title">TU REFRI,<br><span>BAJO CONTROL.</span></h1>
-        <p class="text-white-50 mt-3" style="max-width: 500px;">Gestiona tu stock con inteligencia y descubre recetas increíbles con lo que tienes a mano.</p>
+        <p class="text-white-50 mt-3" style="max-width: 500px;">Gestiona tu stock con inteligencia y salva el planeta.</p>
         <a href="{% url 'lista_recetas' %}" class="btn btn-light fw-800 px-4 py-2 mt-3">▶ EXPLORAR RECETAS</a>
     </div>
 </section>
 
+<div class="stats-container">
+    <div class="stat-item">
+        <span class="stat-value text-white" id="count-total">0</span>
+        <span class="stat-label">Stock Total</span>
+    </div>
+    <div class="stat-item">
+        <span class="stat-value text-success" id="count-fresco">0</span>
+        <span class="stat-label">Frescos 🍏</span>
+    </div>
+    <div class="stat-item">
+        <span class="stat-value text-warning" id="count-proximo">0</span>
+        <span class="stat-label">Por Vencer ⏳</span>
+    </div>
+    <div class="stat-item">
+        <span class="stat-value text-danger" id="count-vencido">0</span>
+        <span class="stat-label">Vencidos 🚨</span>
+    </div>
+</div>
+
+<div class="filter-container">
+    <button class="btn-filter active" onclick="filtrarAlimentos('todos', this)">VER TODO</button>
+    <button class="btn-filter" onclick="filtrarAlimentos('rojo', this)">SOLO VENCIDOS</button>
+    <button class="btn-filter" onclick="filtrarAlimentos('amarillo', this)">POR VENCER</button>
+    <button class="btn-filter" onclick="filtrarAlimentos('verde', this)">FRESCOS</button>
+</div>
+
 <h4 class="section-title">📺 MI INVENTARIO ACTUAL</h4>
-<div class="netflix-row">
+<div class="netflix-row" id="main-inventory">
     {% for alimento in alimentos %}
-    <div class="food-card {% if alimento.estado == 'rojo' %}card-vencido{% endif %}">
+    <div class="food-card item-alimento 
+        {% if alimento.estado == 'rojo' %} card-vencido-animada 
+        {% elif alimento.estado == 'amarillo' %} card-proximo-animada 
+        {% endif %}" data-estado="{{ alimento.estado }}">
         
-        <a href="javascript:void(0)" 
-           class="btn-delete-food" 
-           onclick="confirmarBorrado('{% url 'eliminar_alimento' alimento.id %}', '{{ alimento.nombre }}')">
-           <span>🗑️</span>
+        <a href="javascript:void(0)" class="btn-delete-food" onclick="confirmarBorrado('{% url 'eliminar_alimento' alimento.id %}', '{{ alimento.nombre }}')">
+            <span>🗑️</span>
         </a>
 
-        <div class="badge-bubble" style="background: {% if alimento.estado == 'rojo' %}var(--vencido){% elif alimento.estado == 'amarillo' %}var(--por-vencer){% else %}var(--fresco){% endif %};">
+        <div class="badge-bubble" style="background: {% if alimento.estado == 'rojo' %}var(--vencido){% elif alimento.estado == 'amarillo' %}var(--por-vencer){% else %}var(--fresco){% endif %}; color: {% if alimento.estado == 'amarillo' %}black{% else %}white{% endif %};">
             {% if alimento.estado == 'rojo' %} ¡VENCIDO! {% elif alimento.estado == 'amarillo' %} USAR YA {% else %} FRESCO {% endif %}
         </div>
 
@@ -201,19 +192,20 @@
             <p class="small text-white-50 mb-2">Vence: {{ alimento.fecha_caducidad }}</p>
             
             {% if alimento.estado == 'rojo' %}
-                <button class="btn-status btn-vencido" onclick="confirmarBorrado('{% url 'eliminar_alimento' alimento.id %}', '{{ alimento.nombre }}')">
-                    🗑️ DESÉCHALO
-                </button>
+                <button class="btn-status btn-danger text-white" onclick="confirmarBorrado('{% url 'eliminar_alimento' alimento.id %}', '{{ alimento.nombre }}')">🗑️ DESÉCHALO</button>
             {% elif alimento.estado == 'amarillo' %}
-                <a href="{% url 'lista_recetas' %}" class="btn-status btn-por-vencer">
-                    🔍 BUSCAR RECETA
-                </a>
+                <a href="{% url 'lista_recetas' %}" class="btn-status btn-warning text-dark">🔍 BUSCAR RECETA</a>
             {% else %}
-                <a href="{% url 'lista_recetas' %}" class="btn-status btn-fresco">
-                    🥗 FRESCO
-                </a>
+                <a href="{% url 'lista_recetas' %}" class="btn-status bg-white text-dark">🥗 FRESCO</a>
             {% endif %}
         </div>
+    </div>
+    {% empty %}
+    <div class="empty-state w-100">
+        <span style="font-size: 50px;">🧊</span>
+        <h3 class="mt-3">¡Huele a limpio!</h3>
+        <p class="text-white-50">Tu refrigerador está vacío. Añade algo para empezar.</p>
+        <a href="{% url 'agregar_alimento' %}" class="btn btn-danger">+ AGREGAR PRIMER ALIMENTO</a>
     </div>
     {% endfor %}
 </div>
@@ -227,43 +219,56 @@
             <small class="text-warning">Explorar catálogo</small>
         </div>
     </div>
-    <div class="food-card" onclick="location.href='{% url 'agregar_receta' %}'">
-        <img src="https://images.unsplash.com/photo-1473093226795-af9932fe5856?q=80&w=400">
-        <div class="card-overlay">
-            <p class="food-name">Nueva Receta</p>
-            <small class="text-warning">Añadir al libro</small>
-        </div>
-    </div>
 </div>
 
 <script>
+// --- MOTOR DE ESTADÍSTICAS Y FILTROS ---
+document.addEventListener('DOMContentLoaded', function() {
+    actualizarContadores();
+});
+
+function actualizarContadores() {
+    const total = document.querySelectorAll('.item-alimento').length;
+    const vencidos = document.querySelectorAll('.item-alimento[data-estado="rojo"]').length;
+    const proximos = document.querySelectorAll('.item-alimento[data-estado="amarillo"]').length;
+    const frescos = total - (vencidos + proximos);
+
+    document.getElementById('count-total').innerText = total;
+    document.getElementById('count-vencido').innerText = vencidos;
+    document.getElementById('count-proximo').innerText = proximos;
+    document.getElementById('count-fresco').innerText = frescos;
+}
+
+function filtrarAlimentos(estado, btn) {
+    document.querySelectorAll('.btn-filter').forEach(b => b.classList.remove('active'));
+    btn.classList.add('active');
+
+    const cards = document.querySelectorAll('.item-alimento');
+    cards.forEach(card => {
+        if (estado === 'todos' || card.getAttribute('data-estado') === estado) {
+            card.style.display = 'block';
+        } else {
+            card.style.display = 'none';
+        }
+    });
+}
+
 function confirmarBorrado(url, nombre) {
     Swal.fire({
         title: '¿Sacar de la despensa?',
-        text: `Vas a eliminar "${nombre}". ¿Deseas continuar?`,
+        text: `Vas a eliminar "${nombre}".`,
         icon: 'warning',
         showCancelButton: true,
         background: '#141414',
         color: '#fff',
         confirmButtonColor: '#E50914',
-        cancelButtonColor: '#444',
         confirmButtonText: 'Sí, eliminar',
-        cancelButtonText: 'No, cancelar',
-        reverseButtons: true,
-        backdrop: `rgba(0,0,0,0.8)`
+        cancelButtonText: 'Cancelar'
     }).then((result) => {
         if (result.isConfirmed) {
-            Swal.fire({
-                title: 'Actualizando...',
-                background: '#141414',
-                color: '#fff',
-                showConfirmButton: false,
-                timer: 800,
-                didOpen: () => { Swal.showLoading() }
-            });
-            setTimeout(() => { window.location.href = url; }, 800);
+            window.location.href = url;
         }
-    })
+    });
 }
 </script>
 
